@@ -30,12 +30,15 @@ jobs:
           source venv/bin/activate
       
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install -r BACK_END/requirements.txt
+
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
       - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+        run: |
+          zip release.zip BACK_END/* -r
+          zip release.zip .env -j
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
@@ -78,4 +81,12 @@ jobs:
         with:
           app-name: 'takatoshi-web-app'
           slot-name: 'Production'
+          startup-command: 'cd BACK_END && gunicorn --bind=0.0.0.0 --timeout 600 "app:create_app()"'
+          app-settings: |
+            WEBSITE_RUN_FROM_PACKAGE=1
+            SCM_DO_BUILD_DURING_DEPLOYMENT=true
+            PYTHON_ENABLE_VENV_CREATION=1
+            FLASK_APP=app.py
+            FLASK_ENV=production
+            PORT=8000
           
