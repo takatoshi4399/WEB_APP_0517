@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { AnnotatedHeatmap, Map, ClickablePlot } from './cards';
+import Plot from 'react-plotly.js';
 
 function App() {
   const [message, setMessage] = useState('');
+
 
   useEffect(() => {
     fetch('http://localhost:4000/api/message')
@@ -10,12 +13,15 @@ function App() {
       .catch((err) => console.error(err));
   }, []);
 
-  console.log(message);
+  
 
   return (
     <div style={{ textAlign: 'center', marginTop: '50px' }}>
-      <h1>Flask Blueprint APIからのメッセージ</h1>
+      <h1>こちらはデモのグラフです</h1>
       <p>{message}</p>
+      <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', gap: '20px' }}>
+        <ClickablePlot/>
+      </div>
     </div>
   );
 }
