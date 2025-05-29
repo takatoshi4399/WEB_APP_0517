@@ -1,5 +1,6 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
+import { PrimaryButton } from '@fluentui/react';
 
 const xValues = ['残高', '前日比', '前月比'];
 const yValues = ['AD', 'APAC', 'EA', 'EMEA', 'TKY'];
@@ -20,6 +21,16 @@ const zColor = [
 ];
 
 const AnnotatedHeatmap = () => {
+
+  const handleClick = (eventData) => {
+    console.log(eventData.points[0].x);
+    alert('You clicked this Plotly chart!');
+  };
+
+  const handleClicks = (eventData) => {
+    alert('You clicked this FluentUI Button!');
+  };
+
   // annotations 配列を生成
   const annotations = [];
   for (let i = 0; i < yValues.length; i++) {
@@ -64,37 +75,43 @@ const AnnotatedHeatmap = () => {
   );
 
   return (
-    <Plot
-      data={[{
-        z: zColor,
-        x: xValues,
-        y: yValues,
-        type: 'heatmap',
-        customdata: customData,
-        text: hoverText,
-        hoverinfo: 'text',
-        colorscale: [
-          [0, '#ffcccc'],   // 赤
-          [0.33, '#ffcccc'],
-          [0.34, '#ccffcc'], // 緑
-          [0.66, '#ccffcc'],
-          [0.67, '#ffffff'], // 白
-          [1, '#ffffff']
-        ],
-        showscale: false
-      }]}
-      layout={{
-        title: '地域別の預金増減表',
-        annotations,
-        width: 700,
-        height: 400,
-        margin: { t: 50 }
-      }}
-      style={{ width: '100%', height: '100%' }}
-      onUnhover={({point, event}) => {
-        console.log(event.clientX);
-      }}
-    />
+    <div>
+      <Plot
+        data={[{
+          z: zColor,
+          x: xValues,
+          y: yValues,
+          type: 'heatmap',
+          customdata: customData,
+          text: hoverText,
+          hoverinfo: 'text',
+          colorscale: [
+            [0, '#ffcccc'],   // 赤
+            [0.33, '#ffcccc'],
+            [0.34, '#ccffcc'], // 緑
+            [0.66, '#ccffcc'],
+            [0.67, '#ffffff'], // 白
+            [1, '#ffffff']
+          ],
+          showscale: false
+        }]}
+        layout={{
+          title: '地域別の預金増減表',
+          annotations,
+          width: 700,
+          height: 400,
+          margin: { t: 50 }
+        }}
+        style={{ width: '100%', height: '100%' }}
+        onUnhover={({event}) => {
+          console.log(event.clientX);
+        }}
+        onClick={handleClick}
+      />
+      <div>
+        <PrimaryButton onClick={handleClicks}>Click me</PrimaryButton>
+      </div>
+    </div>
   );
 };
 

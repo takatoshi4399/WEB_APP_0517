@@ -20,7 +20,7 @@ function App() {
       <h1>こちらはデモのグラフです</h1>
       <p>{message}</p>
       <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', gap: '20px' }}>
-        <ClickablePlot/>
+        <AnnotatedHeatmap/>
       </div>
     </div>
   );

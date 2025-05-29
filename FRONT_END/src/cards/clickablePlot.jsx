@@ -17,8 +17,8 @@ const ClickablePlot = () => {
   };
 
   const handleClick = (eventData) => {
+    console.log(eventData.points[0].x);
     alert('You clicked this Plotly chart!');
-    // eventData.points[0].x, .y なども取れます
   };
 
   return (
