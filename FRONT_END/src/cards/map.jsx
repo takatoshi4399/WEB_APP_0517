@@ -28,7 +28,7 @@ const Map = () => {
     
       const layout = {
         title: 'Geo Scatter Map',
-        geo: { scope: 'world', projection: { type: 'natural earth' } },
+        geo: { scope: 'world'},
         margin: { l: 0, r: 0, t: 50, b: 0 }
       };
 

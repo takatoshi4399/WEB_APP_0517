@@ -1,62 +1,108 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Plot from 'react-plotly.js';
 import { PrimaryButton } from '@fluentui/react';
 
-const xValues = ['残高', '前日比', '前月比'];
-const yValues = ['AD', 'APAC', 'EA', 'EMEA', 'TKY'];
-const zText = [
-  ['100B', '200B\n(↑100%)', '100B\n(0%)', '10B\n(↓90%)'],
-  ['100B', '100B\n(0%)', '200B\n(↑100%)', '100B\n(0%)'],
-  ['100B', '200B\n(↑100%)', '100B\n(0%)', '10B\n(↓90%)'],
-  ['100B', '100B\n(0%)', '100B\n(0%)', '200B\n(↑100%)'],
-  ['100B', '10B\n(↓90%)', '100B\n(0%)', '100B\n(0%)'],
-];
-// 0:赤, 1:緑, 2:白
-const zColor = [
-  [1, 1, 2, 0],
-  [1, 2, 1, 2],
-  [1, 1, 2, 0],
-  [1, 2, 2, 1],
-  [1, 0, 2, 2],
-];
+const heatmapData = {
+  x: ['残高', '前日比', '前月比'],
+  y: ['AD', 'APAC', 'EA', 'EMEA'],
+  zText: [
+    ['100', '80', '90'],
+    ['100', '85', '90'],
+    ['100', '85', '90'],
+    ['100', '85', '90'],
+  ],
+  initialZColor: [
+    [1, 1, 2, 0],
+    [1, 2, 1, 2],
+    [1, 1, 2, 0],
+    [1, 2, 2, 1],
+    [1, 0, 2, 2],
+  ]
+};
+
+const heatmapData_beforeGroupBy = {
+  x: ['残高', '前日比', '前月比'],
+  y: ['AD-名古屋', 'AD-東京','APAC-タイ', 'EA-韓国', 'EMEA-ロンドン'],
+  zText: [
+    ['50', '40', '45'],
+    ['50', '40', '45'],
+    ['100', '80', '90'],
+    ['100', '85', '90'],
+    ['100', '85', '90'],
+  ],
+  initialZColor: [
+    [1, 1, 2, 0],
+    [1, 2, 1, 2],
+    [1, 1, 2, 0],
+    [1, 2, 2, 1],
+    [1, 0, 2, 2],
+  ]
+};
+
+const generateAnnotations = (data) => {
+  return data.y.flatMap((region, i) =>
+    data.x.map((item, j) => ({
+      xref: 'x1',
+      yref: 'y1',
+      x: item,
+      y: region,
+      text: data.zText[i][j],
+      showarrow: false,
+      font: {
+        family: 'Arial',
+        size: 14,
+        color: 'black'
+      }
+    }))
+  );
+};
 
 const AnnotatedHeatmap = () => {
+  const [zColor, setZColor] = useState(heatmapData.initialZColor);
+  const [clickedRegion, setClickedRegion] = useState('click me');
+  const [annotations, setAnnotations] = useState(generateAnnotations(heatmapData));
+  const [x, setX] = useState(heatmapData.x);
+  const [y, setY] = useState(heatmapData.y);
+  const [Button, setButton] = useState(true);
 
   const handleClick = (eventData) => {
-    console.log(eventData.points[0].x);
-    alert('You clicked this Plotly chart!');
+    const yIdx = heatmapData.y.indexOf(eventData.points[0].y);
+    const xIdx = heatmapData.x.indexOf(eventData.points[0].x);
+    if (yIdx !== -1 && xIdx !== -1) {
+      setClickedRegion(heatmapData.y[yIdx] + ' ' + heatmapData.x[xIdx]);
+      const newZcolor = zColor.map(row => [...row]);
+      newZcolor[yIdx][xIdx] = 3;
+      setZColor(newZcolor);
+    }
   };
 
   const handleClicks = (eventData) => {
-    alert('You clicked this FluentUI Button!');
+    if (Button) {
+      setX(heatmapData_beforeGroupBy.x);
+      setY(heatmapData_beforeGroupBy.y);
+      console.log(heatmapData_beforeGroupBy.y);
+      setAnnotations(generateAnnotations(heatmapData_beforeGroupBy));
+      console.log(annotations);
+      setButton(false);
+    } else {
+      setX(heatmapData.x);
+      setY(heatmapData.y);
+      setAnnotations(generateAnnotations(heatmapData));
+      setButton(true);
+    }
   };
 
+
+
   // annotations 配列を生成
-  const annotations = [];
-  for (let i = 0; i < yValues.length; i++) {
-    for (let j = 0; j < xValues.length; j++) {
-      annotations.push({
-        xref: 'x1',
-        yref: 'y1',
-        x: xValues[j],
-        y: yValues[i],
-        text: zText[i][j],
-        showarrow: false,
-        font: {
-          family: 'Arial',
-          size: 14,
-          color: 'black'
-        }
-      });
-    }
-  }
+  // const annotations = generateAnnotations(heatmapData);
 
   // カスタムデータの準備
-  const customData = yValues.map((region, i) => 
-    xValues.map((item, j) => ({
+  const customData = heatmapData.y.map((region, i) => 
+    heatmapData.x.map((item, j) => ({
       region: region,
       item: item,
-      value: zText[i][j],
+      value: heatmapData.zText[i][j],
       colorCode: zColor[i][j],
       regionCode: i,
       itemCode: j
@@ -64,9 +110,9 @@ const AnnotatedHeatmap = () => {
   );
 
   // ホバーテキストの準備
-  const hoverText = yValues.map((region, i) => 
-    xValues.map((item, j) => {
-      const value = zText[i][j];
+  const hoverText = heatmapData.y.map((region, i) => 
+    heatmapData.x.map((item, j) => {
+      const value = heatmapData.zText[i][j];
       const colorValue = zColor[i][j];
       const status = colorValue === 0 ? '減少' : 
                     colorValue === 1 ? '増加' : '変化なし';
@@ -79,8 +125,8 @@ const AnnotatedHeatmap = () => {
       <Plot
         data={[{
           z: zColor,
-          x: xValues,
-          y: yValues,
+          x: x,
+          y: y,
           type: 'heatmap',
           customdata: customData,
           text: hoverText,
@@ -109,7 +155,7 @@ const AnnotatedHeatmap = () => {
         onClick={handleClick}
       />
       <div>
-        <PrimaryButton onClick={handleClicks}>Click me</PrimaryButton>
+        <PrimaryButton onClick={handleClicks}>{clickedRegion}</PrimaryButton>
       </div>
     </div>
   );
