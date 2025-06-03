@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { AnnotatedHeatmap, Map, ClickablePlot } from './cards';
-import Plot from 'react-plotly.js';
+import { AnnotatedHeatmap, ClickablePlot, GlobalMap} from './cards';
+import {globalMapData} from './data';
+
 
 function App() {
   const [message, setMessage] = useState('');
@@ -20,7 +21,7 @@ function App() {
       <h1>こちらはデモのグラフです</h1>
       <p>{message}</p>
       <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', gap: '20px' }}>
-        <AnnotatedHeatmap/>
+        <GlobalMap locations={globalMapData} />
       </div>
     </div>
   );
