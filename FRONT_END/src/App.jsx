@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { AnnotatedHeatmap, ClickablePlot, GlobalMap} from './cards';
+import { AnnotatedHeatmap, ClickablePlot, GlobalMap, FortuneTellingGame} from './cards';
 import {globalMapData} from './data';
 
 
@@ -20,10 +20,13 @@ function App() {
     <div style={{ textAlign: 'center', marginTop: '50px' }}>
       <h1>こちらはデモのグラフです</h1>
       <p>{message}</p>
-      <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', gap: '20px' }}>
-        <GlobalMap locations={globalMapData} />
+      <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', width: '100%', height: '100%'}}>
+        <FortuneTellingGame />
       </div>
     </div>
+    // <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', width: '100%', height: '100%'}}>
+    //     <FortuneTellingGame />
+    // </div>
   );
 }
 
